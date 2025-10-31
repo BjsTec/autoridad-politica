@@ -1,26 +1,127 @@
+/* src/globals.css */
+
+/* 1. Importa la base de Tailwind */
 @import "tailwindcss";
 
+/* 2. Define nuestra NUEVA paleta de colores como variables CSS */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* -- Colores Primarios (Azules de la paleta) -- */
+  --color-primary-DEFAULT: #033E8C; /* */
+  --color-primary-light: #034AA6;   /* */
+  --color-primary-dark: #011C40;   /* */
+  --color-primary-600: #022B59;  /* */
+  
+  /* -- Colores Secundarios (Dorado de la paleta) -- */
+  --color-secondary-DEFAULT: #BF9765; /* */
+  --color-secondary-light: #D1AB80;  /* (Aclarado para hover) */
+  --color-secondary-dark: #A88258; /* (Oscurecido para texto) */
+
+  /* -- Colores Neutrales (Para secciones claras y texto) -- */
+  --color-neutral-lightest: #FFFFFF; /* Blanco puro para secciones claras */
+  --color-neutral-light: #F0F4F8;   /* Gris muy claro */
+  --color-neutral-medium: #A9B4C2;  /* Texto gris claro */
+  --color-neutral-dark: #4A5568;    /* Texto oscuro para fondos claros */
+  --color-neutral-100: #E0E6EB;
+  --color-neutral-200: #C2CCD6;
+  --color-neutral-300: #A9B4C2;
+  --color-neutral-400: #7A8A99;
+  --color-neutral-500: #6B7280; 
+  --color-neutral-600: #4A5568; 
+  --color-neutral-700: #374151;
+  --color-neutral-800: #2D3748;
+  --color-neutral-900: #1F2937; /* Texto oscuro principal */
+  
+  /* -- Colores Semánticos (Errores, etc. - Mantenemos los anteriores) -- */
+  --color-success-100: #D1FAE5;
+  --color-success-400: #34D399;
+  --color-success-500: #10B981;
+  --color-success-700: #047857;
+  --color-error-100: #FEE2E2;
+  --color-error-400: #F87171;
+  --color-error-500: #EF4444;
+  --color-error-600: #DC2626;
+  --color-error-700: #B91C1C;
+  --color-error-800: #991B1B;
+  --color-warning-100: #FEF3C7;
+  --color-warning-400: #FBBF24;
+  --color-warning-700: #B45309;
+  --color-info-100: #DBEAFE;
+  --color-info-400: #60A5FA;
+  --color-info-700: #1D4ED8;
+  
+  /* -- Fondo y Texto Base -- */
+  --background: var(--color-primary-dark); /* Fondo "casi negro" */
+  --foreground: var(--color-neutral-light); /* Texto claro por defecto */
 }
 
+/* No necesitamos @media (prefers-color-scheme: dark) si nuestro
+   diseño es oscuro por defecto */
+
+/* 3. Mapea las variables para que Tailwind las use (Sintaxis v4 Plana) */
 @theme inline {
+  /* Mapea los colores de fondo y texto base */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Mapea las fuentes (leyendo las variables de :root) */
+  --font-family-sans: var(--font-open-sans);
+  --font-family-heading: var(--font-montserrat);
+
+  /* Mapeo de Primarios */
+  --color-primary: var(--color-primary-DEFAULT); 
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-600: var(--color-primary-600);
+  
+  /* Mapeo de Secundarios */
+  --color-secondary: var(--color-secondary-DEFAULT);
+  --color-secondary-light: var(--color-secondary-light);
+  --color-secondary-dark: var(--color-secondary-dark);
+
+  /* Mapeo de Neutrales */
+  --color-neutral: var(--color-neutral-500); /* DEFAULT neutral */
+  --color-neutral-lightest: var(--color-neutral-lightest);
+  --color-neutral-light: var(--color-neutral-light);
+  --color-neutral-medium: var(--color-neutral-medium);
+  --color-neutral-dark: var(--color-neutral-dark);
+  --color-neutral-100: var(--color-neutral-100);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-300: var(--color-neutral-300);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-500: var(--color-neutral-500);
+  --color-neutral-600: var(--color-neutral-600);
+  --color-neutral-700: var(--color-neutral-700);
+  --color-neutral-800: var(--color-neutral-800);
+  --color-neutral-900: var(--color-neutral-900);
+  
+  /* Mapeo de Semánticos */
+  --color-success: var(--color-success-500);
+  --color-success-100: var(--color-success-100);
+  --color-success-400: var(--color-success-400);
+  --color-success-700: var(--color-success-700);
+  --color-error: var(--color-error-500);
+  --color-error-100: var(--color-error-100);
+  --color-error-400: var(--color-error-400);
+  --color-error-600: var(--color-error-600);
+  --color-error-700: var(--color-error-700);
+  --color-error-800: var(--color-error-800);
+  --color-warning-100: var(--color-warning-100);
+  --color-warning-400: var(--color-warning-400);
+  --color-warning-700: var(--color-warning-700);
+  --color-info-100: var(--color-info-100);
+  --color-info-400: var(--color-info-400);
+  --color-info-700: var(--color-info-700);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 4. Estilos base del body */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: theme(font-family-sans); 
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: theme(font-family-heading); 
 }
