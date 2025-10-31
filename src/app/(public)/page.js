@@ -1,28 +1,27 @@
-// src/app/(public)/page.js
-// import Header from '../../components/landing/Header'
-import HeroSection from '../../components/landing/HeroSection'
-// import FeaturesSection from '../../components/landing/FeaturesSection'
-// import AppShowcaseSection from '../../components/landing/AppShowcaseSection'
-// import PlansSection from '../../components/landing/PlansSection'
-// import PromoBonusSection from '../../components/landing/PromoBonusSection'
-// import ContactFormSection from '../../components/landing/ContactFormSection'
-// import Footer from '../../components/landing/Footer'
+// src/app/(public)/page.jsx
+import Header from '../../components/landing/Header.jsx'
+import HeroSection from '../../components/landing/HeroSection.jsx'
+import FeaturesSection from '../../components/landing/FeaturesSection.jsx'
+import AppShowcaseSection from '../../components/landing/AppShowcaseSection.jsx'
+import PlansSection from '../../components/landing/PlansSection.jsx'
+import PromoBonusSection from '../../components/landing/PromoBonusSection.jsx'
+import ContactFormSection from '../../components/landing/ContactFormSection.jsx'
+import Footer from '../../components/landing/Footer.jsx'
 
 export default function HomePage() {
   return (
-    // Este div ya no necesita 'bg-neutral-darkest' ni 'text-neutral-lightest'.
-    // Heredará los estilos del <body>.
+    // Hereda el fondo oscuro desde layout.js
     <div className="flex flex-col min-h-screen">
-      {/* <Header /> */}
-      <main className="flex-grow">
+      <Header />
+      <main className="grow">
         <HeroSection />
-        {/* <FeaturesSection />
+        <FeaturesSection />
         <AppShowcaseSection />
         <PlansSection />
         <PromoBonusSection />
-        <ContactFormSection /> */}
+        <ContactFormSection />
       </main>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

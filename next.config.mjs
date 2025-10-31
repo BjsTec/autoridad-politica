@@ -1,6 +1,20 @@
+// next.config.mjs
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-};
+  // --- INICIO DE LA CORRECCIÓN ---
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+      // Aquí puedes añadir otros dominios si los necesitas
+    ],
+  },
+  // --- FIN DE LA CORRECCIÓN ---
+}
 
-export default nextConfig;
+export default nextConfig

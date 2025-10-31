@@ -1,37 +1,37 @@
-// src/components/ui/Button.jsx
+// src/components/ui/Button.jsx (Actualizado)
 'use client'
 
 import React from 'react'
+import Link from 'next/link' // Importamos Link
 import { Loader2 } from 'lucide-react'
 
-// --- INICIO DE LA CORRECCIÓN CRÍTICA ---
-// Mapeo estático para que Tailwind JIT pueda detectar las clases
+// Mapeo estático (Actualizado con colores de la landing)
 const colorMap = {
   solid: {
     primary: 'bg-primary-DEFAULT text-white hover:bg-primary-600 focus:ring-primary-500',
+    // --- NUEVO (Dorado) ---
+    secondary: 'bg-secondary text-primary-dark hover:bg-secondary-light focus:ring-secondary', 
     error: 'bg-error-DEFAULT text-white hover:bg-error-600 focus:ring-error-500',
     neutral: 'bg-neutral-600 text-white hover:bg-neutral-700 focus:ring-neutral-500',
-    // ... otros colores
   },
   outline: {
     primary: 'border border-primary-DEFAULT text-primary-DEFAULT hover:bg-primary-50 focus:ring-primary-500',
     error: 'border border-error-DEFAULT text-error-DEFAULT hover:bg-error-50 focus:ring-error-500',
     neutral: 'border border-neutral-400 text-neutral-600 hover:bg-neutral-100 focus:ring-neutral-500',
-    // ... otros colores
   },
   text: {
     primary: 'text-primary-600 hover:bg-primary-100 focus:ring-primary-500',
     error: 'text-error-600 hover:bg-error-100 focus:ring-error-500',
     neutral: 'text-neutral-600 hover:bg-neutral-100 focus:ring-neutral-500',
-    // ... otros colores
+    // --- NUEVO (Blanco/Claro para fondo oscuro) ---
+    white: 'text-neutral-lightest hover:text-secondary-light focus:ring-secondary-light',
   },
   link: {
     primary: 'text-primary-DEFAULT hover:underline focus:ring-primary-500 p-0',
     neutral: 'text-neutral-600 hover:underline focus:ring-neutral-500 p-0',
-    // ... otros colores
   },
 }
-// --- FIN DE LA CORRECCIÓN ---
+
 
 const Button = ({
   children,
@@ -45,6 +45,7 @@ const Button = ({
   className = '',
   IconComponent = null,
   iconPosition = 'left',
+  href, // <-- NUEVA PROP
   ...props
 }) => {
   const baseClasses =
@@ -52,7 +53,7 @@ const Button = ({
 
   const sizeClasses = {
     sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
+    md: 'px-4 py-2.5 text-sm', // Ajustado a py-2.5 como en la landing
     lg: 'px-5 py-2.5 text-lg',
     xl: 'px-6 py-3 text-xl',
   }[size]
@@ -77,14 +78,10 @@ const Button = ({
       : 'ml-2'
     : ''
 
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`${baseClasses} ${sizeClasses} ${variantClasses} ${disabledOrLoadingClasses} ${className}`}
-      {...props}
-    >
+  const combinedClasses = `${baseClasses} ${sizeClasses} ${variantClasses} ${disabledOrLoadingClasses} ${className}`
+
+  const content = (
+    <>
       {loading ? (
         <Loader2
           className={`animate-spin ${iconClasses} ${children ? 'mr-2' : ''}`}
@@ -99,6 +96,33 @@ const Button = ({
       {!loading && IconComponent && iconPosition === 'right' && (
         <IconComponent className={`${iconClasses} ${iconMarginClasses}`} />
       )}
+    </>
+  )
+
+  // --- LÓGICA POLIMÓRFICA ---
+  if (href) {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={combinedClasses}
+        aria-disabled={disabled || loading}
+        {...props}
+      >
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={combinedClasses}
+      {...props}
+    >
+      {content}
     </button>
   )
 }
