@@ -6,10 +6,10 @@
 /* 2. Define nuestra NUEVA paleta de colores como variables CSS */
 :root {
   /* -- Colores Primarios (Azules de la paleta) -- */
-  --color-primary-DEFAULT: #033E8C; /* */
-  --color-primary-light: #034AA6;   /* */
-  --color-primary-dark: #011C40;   /* */
-  --color-primary-600: #022B59;  /* */
+  --color-primary-DEFAULT: #000329; /* */
+  --color-primary-light: #f0f0f0;   /* */
+  --color-primary-dark: #010222;   /* */
+  --color-primary-600: #010938;  /* */
   
   /* -- Colores Secundarios (Dorado de la paleta) -- */
   --color-secondary-DEFAULT: #BF9765; /* */

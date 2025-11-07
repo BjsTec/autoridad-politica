@@ -1,6 +1,9 @@
 // src/components/landing/PlansSection.jsx
+'use client'
+
 import { CheckIcon } from '@heroicons/react/20/solid'
-import Button from '../ui/Button' // <-- Importamos nuestro botón
+import Button from '../ui/Button'
+import { motion } from 'framer-motion' // Importamos motion
 
 const tiers = [
   // (Datos de planes sin cambios)
@@ -54,32 +57,80 @@ const tiers = [
   },
 ]
 
+// --- NUEVO: Variantes de animación ---
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 15,
+      stiffness: 100,
+    },
+  },
+}
+
 export default function PlansSection() {
   return (
-    <div id="plans" className="bg-neutral-lightest py-24 sm:py-32">
-      {' '}
-      {/* Fondo gris casi blanco */}
+    // --- CAMBIO: Eliminado 'bg-neutral-lightest' ---
+    <div id="plans" className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-base font-semibold leading-7 text-secondary-dark">
+          <motion.h2
+            className="text-base font-semibold leading-7 text-secondary" // CAMBIO
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
             Precios
-          </h2>
-          <p className="mt-2 text-4xl font-bold tracking-tight text-primary-dark sm:text-5xl">
+          </motion.h2>
+          <motion.p
+            className="mt-2 text-4xl font-bold tracking-tight text-neutral-lightest sm:text-5xl" // CAMBIO
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
             Elige el plan perfecto para tu campaña
-          </p>
+          </motion.p>
         </div>
-        <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-neutral-dark">
+        <motion.p
+          className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-neutral-light" // CAMBIO
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          viewport={{ once: true, amount: 0.5 }}
+        >
           Desde equipos pequeños hasta campañas nacionales, tenemos una opción
           para ti. Empieza gratis hoy mismo.
-        </p>
-        <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        </motion.p>
+        <motion.div
+          className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {tiers.map((tier, tierIdx) => (
-            <div
+            <motion.div
               key={tier.id}
+              variants={itemVariants}
+              whileHover={{ scale: 1.03, y: -5 }} // --- NUEVA Animación Hover ---
               className={`flex flex-col justify-between rounded-3xl p-8 ring-1 xl:p-10 ${
                 tier.mostPopular
-                  ? 'bg-white ring-2 ring-secondary'
-                  : 'bg-white ring-neutral-medium'
+                  ? 'bg-white ring-2 ring-secondary' // Se mantiene blanco
+                  : 'bg-white ring-neutral-medium' // Se mantiene blanco
               } ${tierIdx === 1 ? 'lg:z-10 lg:scale-105' : ''}`}
             >
               <div>
@@ -119,22 +170,20 @@ export default function PlansSection() {
                 </ul>
               </div>
 
-              {/* --- INICIO REFACTORIZACIÓN --- */}
               <Button
                 href={tier.href}
                 aria-describedby={tier.id}
                 color={tier.mostPopular ? 'secondary' : 'primary'}
-                size="md" // Usa el py-2.5 que definimos
-                className="mt-8 w-full" // w-full reemplaza a 'block'
+                size="md"
+                className="mt-8 w-full"
               >
                 {tier.priceMonthly === '$0'
                   ? 'Empezar Gratis'
                   : 'Seleccionar Plan'}
               </Button>
-              {/* --- FIN REFACTORIZACIÓN --- */}
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

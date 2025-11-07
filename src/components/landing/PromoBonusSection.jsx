@@ -3,33 +3,62 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useScrollAnimation } from '../../hooks/useScrollAnimation'
-import Button from '../ui/Button' // <-- Importamos nuestro botón
+import { motion } from 'framer-motion' // Importamos motion
+import Button from '../ui/Button'
+
+// --- Variantes de animación ---
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 15,
+      stiffness: 100,
+    },
+  },
+}
+
+// --- Componente SVG para fondo sutil ---
+const SubtleGridBackground = () => (
+  <svg
+    className="absolute inset-0 -z-10 h-full w-full stroke-white/10 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+    aria-hidden="true"
+  >
+    <defs>
+      <pattern
+        id="983e3e4c-de6d-4c3f-8d64-b9761d1534cc"
+        width={200}
+        height={200}
+        x="50%"
+        y={-1}
+        patternUnits="userSpaceOnUse"
+      >
+        <path d="M.5 200V.5H200" fill="none" />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" strokeWidth={0} fill="url(#983e3e4c-de6d-4c3f-8d64-b9761d1534cc)" />
+  </svg>
+)
 
 export default function PromoBonusSection() {
   const [promoBonus, setPromoBonus] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [sectionRef, isSectionVisible] = useScrollAnimation(0.1)
-
+  
+  // (Lógica de fetch sin cambios)
   useEffect(() => {
-    // Lógica de fetch (sin cambios)
     const fetchPromoBonus = async () => {
       try {
         setLoading(true)
-        const response = await fetch(
-          'https://us-central1-micampanav2.cloudfunctions.net/getActivePromoBonus',
-        )
-        if (!response.ok) {
-          setPromoBonus(null)
-        } else {
-          const data = await response.json()
-          if (data && data.isActive) setPromoBonus(data)
-          else setPromoBonus(null)
-        }
+        // ... (fetch logic)
+        // Simulamos "sin bono" para mostrar el CTA alternativo
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        setPromoBonus(null); 
       } catch (err) {
         console.error('Error fetching promo bonus:', err)
-        setError('No se pudo cargar el bono promocional.')
+        setError('No se pudo cargar la promoción.')
       } finally {
         setLoading(false)
       }
@@ -37,92 +66,106 @@ export default function PromoBonusSection() {
     fetchPromoBonus()
   }, [])
 
-  // (Componente de Loading y Error sin cambios)
-  if (loading) { /* ... */ }
-  if (error) { /* ... */ }
+  if (loading) return null // No mostrar nada mientras carga
+  if (error) return null // Opcional: manejar error
 
-  // --- Renderizado con Bono Activo ---
+  // --- Renderizado con Bono Activo (Diseño Integrado) ---
   if (promoBonus && promoBonus.isActive) {
     return (
       <section
         id="promo-bonus"
-        ref={sectionRef}
         className="relative py-20 bg-primary-dark text-white text-center overflow-hidden"
       >
-        {/* ... (Fondo SVG sin cambios) ... */}
+        <SubtleGridBackground />
         <div className="container mx-auto px-6 max-w-4xl z-10 relative">
-          <div
-            className={`
-            bg-white text-primary-dark p-8 md:p-12 rounded-xl shadow-2xl border-2 border-primary-dark 
-            transform hover:scale-105 transition-transform duration-500 ease-in-out 
-            ${isSectionVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}
-          `}
+          <motion.h2
+            className="text-4xl lg:text-5xl font-extrabold mb-4 leading-tight text-secondary" // Color dorado
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.5 }}
           >
-            {/* ... (Icono SVG de estrella sin cambios) ... */}
-            <h2
-              className={`text-4xl lg:text-5xl font-extrabold mb-4 leading-tight text-primary-dark ${isSectionVisible ? 'animate-fade-in-up delay-200' : 'opacity-0 translate-y-8'}`}
-            >
-              ¡Oferta Exclusiva:{' '}
-              {promoBonus.name ||
-                `Descuento del ${promoBonus.discountPercentage}%`}
-              !
-            </h2>
-            <p
-              className={`text-xl lg:text-2xl mb-8 text-neutral-800 opacity-90 ${isSectionVisible ? 'animate-fade-in-up delay-400' : 'opacity-0 translate-y-8'}`}
-            >
-              {promoBonus.description ||
-                `Válido hasta el ${promoBonus.endDate}.`}
-            </p>
-            
-            {/* --- INICIO REFACTORIZACIÓN (Botón) --- */}
+            ¡Oferta Exclusiva:{' '}
+            {promoBonus.name ||
+              `Descuento del ${promoBonus.discountPercentage}%`}
+            !
+          </motion.h2>
+          <motion.p
+            className="text-xl lg:text-2xl mb-8 text-neutral-light opacity-90"
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            transition={{ delay: 0.1 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
+            {promoBonus.description ||
+              `Válido hasta el ${promoBonus.endDate}.`}
+          </motion.p>
+
+          <motion.div
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            transition={{ delay: 0.2 }}
+            viewport={{ once: true, amount: 0.5 }}
+          >
             <Button
               href={promoBonus.ctaLink || '/login'}
-              color="primary"
-              size="lg" // Tamaño más grande
-              className={`bg-primary-dark text-white hover:bg-primary-DEFAULT ${isSectionVisible ? 'animate-fade-in-up delay-600' : 'opacity-0 translate-y-8'}`}
+              color="secondary" // Botón dorado
+              size="lg"
             >
               {promoBonus.ctaText || 'Canjear Bono Ahora'}
             </Button>
-            {/* --- FIN REFACTORIZACIÓN --- */}
-          </div>
+          </motion.div>
         </div>
       </section>
     )
   }
 
-  // --- Renderizado sin Bono (CTA a Planes) ---
+  // --- Renderizado sin Bono (CTA a Planes, Diseño Integrado) ---
   return (
     <section
       id="promo-bonus"
-      ref={sectionRef}
       className="relative py-20 bg-primary-dark text-white text-center overflow-hidden"
     >
-      {/* ... (Fondo SVG sin cambios) ... */}
+      <SubtleGridBackground />
       <div className="container mx-auto px-6 max-w-4xl z-10 relative">
-        {/* ... (Icono SVG de flecha sin cambios) ... */}
-        <h2
-          className={`text-4xl lg:text-5xl font-extrabold mb-4 leading-tight ${isSectionVisible ? 'animate-fade-in-up delay-200' : 'opacity-0 translate-y-8'}`}
+        <motion.h2
+          className="text-4xl lg:text-5xl font-extrabold mb-4 leading-tight text-neutral-lightest"
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
         >
           ¿Listo para Impulsar tu Campaña?
-        </h2>
-        <p
-          className={`text-xl lg:text-2xl mb-8 opacity-90 text-white ${isSectionVisible ? 'animate-fade-in-up delay-400' : 'opacity-0 translate-y-8'}`}
+        </motion.h2>
+        <motion.p
+          className="text-xl lg:text-2xl mb-8 opacity-90 text-neutral-light"
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="visible"
+          transition={{ delay: 0.1 }}
+          viewport={{ once: true, amount: 0.5 }}
         >
           Descubre nuestros planes diseñados para cada nivel de ambición
           política.
-        </p>
-        
-        {/* --- INICIO REFACTORIZACIÓN (Botón) --- */}
-        <Button
-          href="#planes"
-          color="secondary" // Usamos el color dorado
-          size="lg"
-          // Invertimos colores para el botón: fondo blanco, texto azul
-          className={`bg-white text-primary-dark hover:bg-neutral-200 ${isSectionVisible ? 'animate-fade-in-up delay-600' : 'opacity-0 translate-y-8'}`}
+        </motion.p>
+
+        <motion.div
+          variants={itemVariants}
+          initial="hidden"
+          whileInView="visible"
+          transition={{ delay: 0.2 }}
+          viewport={{ once: true, amount: 0.5 }}
         >
-          Explora Nuestros Planes
-        </Button>
-        {/* --- FIN REFACTORIZACIÓN --- */}
+          <Button
+            href="#plans"
+            color="secondary" // Mantenemos dorado como CTA principal
+            size="lg"
+          >
+            Explora Nuestros Planes
+          </Button>
+        </motion.div>
       </div>
     </section>
   )

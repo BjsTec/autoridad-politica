@@ -4,7 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import Button from '../ui/Button' // <-- Importamos nuestro botón
+import Button from '../ui/Button'
+import { motion } from 'framer-motion' // <-- 1. Importar motion
 
 const navigation = [
   { name: 'Inicio', href: '/' },
@@ -17,7 +18,13 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="bg-primary sticky top-0 z-50 shadow-md">
+    // --- 2. Aplicar motion y clases de glassmorphism ---
+    <motion.header
+      className="bg-primary-dark/80 backdrop-blur-lg sticky top-0 z-50" // CAMBIO: Efecto cristal
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: 'spring', damping: 20, stiffness: 100 }}
+    >
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -27,10 +34,11 @@ export default function Header() {
             <span className="sr-only">Mi Campaña V2</span>
             <Image
               className="h-8 w-auto"
-              src="/logo.png" // Asegúrate que el logo exista en public/
+              src="/logo.png" //
               alt="Logo Mi Campaña V2"
               width={32}
               height={32}
+              priority // Priorizar carga del logo
             />
           </Link>
         </div>
@@ -44,8 +52,8 @@ export default function Header() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        
-        {/* --- INICIO REFACTORIZACIÓN --- */}
+
+        {/* Links de navegación (sin cambios, ya usan Button) */}
         <div className="hidden lg:flex lg:gap-x-12">
           {navigation.map((item) => (
             <Button
@@ -53,8 +61,8 @@ export default function Header() {
               href={item.href}
               variant="text"
               color="white"
-              size="sm" // Usamos 'sm' para que sea solo text
-              className="p-0" // Reseteamos padding para que sea solo texto
+              size="sm"
+              className="p-0" //
             >
               {item.name}
             </Button>
@@ -66,29 +74,28 @@ export default function Header() {
             variant="text"
             color="white"
             size="sm"
-            className="p-0"
+            className="p-0" //
           >
             Iniciar Sesión <span aria-hidden="true">&rarr;</span>
           </Button>
         </div>
-        {/* --- FIN REFACTORIZACIÓN --- */}
-
       </nav>
 
-      {/* Mobile menu (lógica sin cambios, pero usamos Button) */}
+      {/* Menú Móvil (lógica sin cambios) */}
       <div
         className={`lg:hidden ${mobileMenuOpen ? 'block' : 'hidden'}`}
         role="dialog"
         aria-modal="true"
       >
-        <div className="fixed inset-0 z-50" />
-        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-neutral-dark/10">
+        {/* --- CAMBIO: Fondo con backdrop-blur para el overlay --- */}
+        <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm" />
+        <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-primary-dark px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-white/10">
           <div className="flex items-center justify-between">
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Mi Campaña V2</span>
               <Image
                 className="h-8 w-auto"
-                src="/logo.png"
+                src="/logo.png" //
                 alt=""
                 width={32}
                 height={32}
@@ -134,6 +141,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   )
 }

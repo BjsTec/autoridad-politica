@@ -2,13 +2,38 @@
 'use client'
 
 import { useState } from 'react'
-// Importamos los componentes del UI Kit
+import { motion } from 'framer-motion' // Importamos motion
 import Button from '../ui/Button'
 import FormGroup from '../ui/FormGroup'
 import Input from '../ui/Input'
-import Textarea from '../ui/Textarea' // Nuestro nuevo componente
+import Textarea from '../ui/Textarea'
 
+// (Lógica de fetch simulada sin cambios)
 // import { submitCommercialLead } from '@/app/actions/commercialLeads';
+
+// --- Variantes de animación ---
+const formVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1, // Cada FormGroup/Button aparecerá escalonado
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      damping: 15,
+      stiffness: 100,
+    },
+  },
+}
 
 export default function ContactFormSection() {
   const [status, setStatus] = useState({
@@ -29,15 +54,14 @@ export default function ContactFormSection() {
   }
 
   const handleSubmit = async (e) => {
+    // (Lógica de handleSubmit sin cambios)
     e.preventDefault()
     setStatus({ loading: true, success: false, error: null })
     try {
-      // (Lógica de Server Action simulada)
       console.log('Formulario enviado (simulado):', formData)
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setStatus({ loading: false, success: true, error: null })
       setFormData({ name: '', email: '', phone: '', message: '' })
-      // (Fin Placeholder)
     } catch (error) {
       console.error('Error submitting form:', error)
       setStatus({
@@ -48,9 +72,7 @@ export default function ContactFormSection() {
     }
   }
 
-  // --- INICIO REFACTORIZACIÓN (Estilos de Inputs) ---
-  const darkInputClasses = "bg-white/5" // Clases para la variante oscura
-  // --- FIN REFACTORIZACIÓN ---
+  const darkInputClasses = "bg-white/5"
 
   return (
     <div
@@ -58,105 +80,128 @@ export default function ContactFormSection() {
       className="bg-primary-dark isolate px-6 py-24 sm:py-32 lg:px-8"
     >
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-neutral-lightest sm:text-4xl">
+        <motion.h2
+          className="text-3xl font-bold tracking-tight text-neutral-lightest sm:text-4xl"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+        >
           Contáctanos
-        </h2>
-        <p className="mt-2 text-lg leading-8 text-neutral-light">
+        </motion.h2>
+        <motion.p
+          className="mt-2 text-lg leading-8 text-neutral-light"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          viewport={{ once: true, amount: 0.5 }}
+        >
           ¿Tienes preguntas o quieres una demostración personalizada? Déjanos tus
           datos.
-        </p>
+        </motion.p>
       </div>
-      
-      {/* --- INICIO REFACTORIZACIÓN (Formulario) --- */}
-      <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
+
+      {/* --- INICIO REFACTORIZACIÓN (Formulario animado) --- */}
+      <motion.form
+        onSubmit={handleSubmit}
+        className="mx-auto mt-16 max-w-xl sm:mt-20"
+        variants={formVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }} // Empezar animación cuando 10% del form sea visible
+      >
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           
-          <FormGroup
-            label="Nombre Completo"
-            htmlFor="name"
-            required
-            labelClassName="text-neutral-lightest"
-            className="sm:col-span-2"
-          >
-            <Input
-              type="text"
-              name="name"
-              id="name"
-              autoComplete="name"
+          {/* Cada FormGroup está envuelto en motion.div */}
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <FormGroup
+              label="Nombre Completo"
+              htmlFor="name"
               required
-              value={formData.name}
-              onChange={handleChange}
-              className={darkInputClasses} // Aplicamos estilo oscuro
-            />
-          </FormGroup>
+              labelClassName="text-neutral-lightest"
+            >
+              <Input
+                type="text"
+                name="name"
+                id="name"
+                autoComplete="name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+                className={darkInputClasses}
+              />
+            </FormGroup>
+          </motion.div>
 
-          <FormGroup
-            label="Correo Electrónico"
-            htmlFor="email"
-            required
-            labelClassName="text-neutral-lightest"
-            className="sm:col-span-2"
-          >
-            <Input
-              type="email"
-              name="email"
-              id="email"
-              autoComplete="email"
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <FormGroup
+              label="Correo Electrónico"
+              htmlFor="email"
               required
-              value={formData.email}
-              onChange={handleChange}
-              className={darkInputClasses}
-            />
-          </FormGroup>
+              labelClassName="text-neutral-lightest"
+            >
+              <Input
+                type="email"
+                name="email"
+                id="email"
+                autoComplete="email"
+                required
+                value={formData.email}
+                onChange={handleChange}
+                className={darkInputClasses}
+              />
+            </FormGroup>
+          </motion.div>
 
-          <FormGroup
-            label="Teléfono"
-            htmlFor="phone"
-            helpText="(Opcional)"
-            labelClassName="text-neutral-lightest"
-            className="sm:col-span-2"
-          >
-            <Input
-              type="tel"
-              name="phone"
-              id="phone"
-              autoComplete="tel"
-              value={formData.phone}
-              onChange={handleChange}
-              className={darkInputClasses}
-            />
-          </FormGroup>
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <FormGroup
+              label="Teléfono"
+              htmlFor="phone"
+              helpText="(Opcional)"
+              labelClassName="text-neutral-lightest"
+            >
+              <Input
+                type="tel"
+                name="phone"
+                id="phone"
+                autoComplete="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className={darkInputClasses}
+              />
+            </FormGroup>
+          </motion.div>
 
-          <FormGroup
-            label="Mensaje"
-            htmlFor="message"
-            required
-            labelClassName="text-neutral-lightest"
-            className="sm:col-span-2"
-          >
-            <Textarea
-              name="message"
-              id="message"
-              rows={4}
+          <motion.div variants={itemVariants} className="sm:col-span-2">
+            <FormGroup
+              label="Mensaje"
+              htmlFor="message"
               required
-              value={formData.message}
-              onChange={handleChange}
-              className={darkInputClasses} // Aplicamos estilo oscuro
-            />
-          </FormGroup>
+              labelClassName="text-neutral-lightest"
+            >
+              <Textarea
+                name="message"
+                id="message"
+                rows={4}
+                required
+                value={formData.message}
+                onChange={handleChange}
+                className={darkInputClasses}
+              />
+            </FormGroup>
+          </motion.div>
         </div>
 
-        <div className="mt-10">
+        <motion.div className="mt-10" variants={itemVariants}>
           <Button
             type="submit"
             disabled={status.loading}
             loading={status.loading}
-            color="secondary"
+            color="secondary" // Botón dorado
             className="w-full"
           >
             {status.loading ? 'Enviando...' : 'Enviar Mensaje'}
           </Button>
-        </div>
+        </motion.div>
         {/* --- FIN REFACTORIZACIÓN --- */}
 
         {/* Mensajes de estado (lógica sin cambios) */}
@@ -170,7 +215,7 @@ export default function ContactFormSection() {
             {status.error}
           </p>
         )}
-      </form>
+      </motion.form>
     </div>
   )
 }

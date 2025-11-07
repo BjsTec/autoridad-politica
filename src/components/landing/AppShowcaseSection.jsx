@@ -1,69 +1,131 @@
 // src/components/landing/AppShowcaseSection.jsx
-import React from 'react'
+'use client'
+
+import React, { useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Apple, Smartphone } from 'lucide-react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import Button from '../ui/Button' // <-- CORRECCIÓN: Importación añadida
+
+// Componente interno para el mockup del teléfono
+const PhoneMockup = ({ src, alt, className = '' }) => (
+  <div
+    className={`relative w-[280px] h-[570px] rounded-[44px] border-[14px] border-black bg-black shadow-2xl ${className}`}
+  >
+    <div className="absolute inset-x-0 top-0 h-8 rounded-t-[30px] bg-black z-10 flex justify-center items-end">
+      {/* Notch/Isla */}
+      <div className="w-24 h-5 bg-black rounded-b-lg"></div>
+    </div>
+    <div className="w-full h-full rounded-[30px] overflow-hidden">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover bg-neutral-800"
+      />
+    </div>
+  </div>
+)
 
 export default function AppShowcaseSection() {
+  // Lógica de animación Parallax
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'], // Animar mientras la sección está visible
+  })
+
+  // Mapea el progreso del scroll (0 a 1) a valores de transformación
+  const xTranslateFront = useTransform(scrollYProgress, [0, 1], ['-20%', '20%'])
+  const xTranslateBack = useTransform(scrollYProgress, [0, 1], ['20%', '-20%'])
+  const rotateYFront = useTransform(scrollYProgress, [0, 1], [-15, 15])
+  const rotateYBack = useTransform(scrollYProgress, [0, 1], [15, 15])
+
   return (
     <section
       id="app-movil"
-      className="relative py-24 overflow-hidden bg-primary-dark"
+      ref={sectionRef}
+      className="relative py-24 overflow-hidden bg-primary"
     >
       <div className="container mx-auto px-6 relative z-10 flex flex-col md:flex-row items-center justify-between">
-        {/* Contenido de Texto (Sin cambios) */}
-        <div className="md:w-1/2 text-center md:text-left text-neutral-50 mb-12 md:mb-0">
-          <h2 className="text-5xl font-extrabold leading-tight mb-6 animate-fade-in-up">
+        {/* Contenido de Texto (Animado) */}
+        <motion.div
+          className="md:w-1/2 text-center md:text-left text-neutral-50 mb-12 md:mb-0"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-5xl font-extrabold leading-tight mb-6">
             Autoridad Política Móvil: Tu Campaña Siempre Contigo
           </h2>
-          <p className="text-xl opacity-90 mb-10 animate-fade-in-up delay-200">
+          <p className="text-xl opacity-90 mb-10">
             Accede a todas las herramientas de gestión de tu campaña desde la
             palma de tu mano.
           </p>
-          <div className="flex justify-center md:justify-start space-x-4 animate-fade-in-up delay-400">
-            <Link
+          <div className="flex justify-center md:justify-start space-x-4">
+            <Button
               href="#"
-              className="bg-neutral-50 text-primary-dark px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-transform duration-300 transform hover:scale-105 shadow-lg"
+              variant="solid"
+              className="bg-neutral-50 text-primary-dark hover:bg-neutral-200"
+              size="md"
+              IconComponent={Apple}
             >
-              <Apple className="w-6 h-6" />
-              <span>App Store</span>
-            </Link>
-            <Link
+              App Store
+            </Button>
+            <Button
               href="#"
-              className="bg-neutral-50 text-primary-dark px-6 py-3 rounded-lg font-semibold flex items-center space-x-2 transition-transform duration-300 transform hover:scale-105 shadow-lg"
+              variant="solid"
+              className="bg-neutral-50 text-primary-dark hover:bg-neutral-200"
+              size="md"
+              IconComponent={Smartphone}
             >
-              <Smartphone className="w-6 h-6" />
-              <span>Google Play</span>
-            </Link>
+              Google Play
+            </Button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Maquetas de la App Móvil */}
-        <div className="md:w-1/2 flex justify-center mt-12 md:mt-0 relative">
+        {/* Mockups y Animación */}
+        <div className="md:w-1/2 flex justify-center mt-12 md:mt-0 relative h-[600px] items-center">
           <div className="relative w-[300px] h-[600px] perspective-[1000px] transform-gpu">
-            
-            {/* --- INICIO REFACTORIZACIÓN (Placeholders) --- */}
-            <div className="absolute inset-0 w-full h-full transform-style preserve-3d animate-rotate-y z-20 transition-transform duration-500 hover:rotate-y-0">
-              <Image
-                src="https://placehold.co/300x600/3D5A80/FFFFFF?text=Screen+1&font=montserrat"
-                alt="Pantalla de la aplicación móvil 1"
-                fill={true}
-                className="shadow-2xl rounded-3xl object-cover"
-              />
-            </div>
-            <div className="absolute inset-0 w-full h-full transform-style preserve-3d animate-rotate-y-reverse z-10 transition-transform duration-500 hover:rotate-y-0 translate-x-[50px] md:translate-x-[75px]">
-              <Image
-                src="https://placehold.co/300x600/E0FBFC/1C2B3A?text=Screen+2&font=montserrat"
+            {/* Teléfono Trasero */}
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                translateX: xTranslateBack,
+                rotateY: rotateYBack,
+                z: -5,
+              }}
+            >
+              <PhoneMockup
+                src="/icon-autoridad.png" // Usando asset existente
                 alt="Pantalla de la aplicación móvil 2"
-                fill={true}
-                className="shadow-2xl rounded-3xl object-cover"
               />
-            </div>
-            {/* --- FIN REFACTORIZACIÓN --- */}
+            </motion.div>
+
+            {/* Teléfono Frontal */}
+            <motion.div
+              className="absolute inset-0"
+              style={{
+                translateX: xTranslateFront,
+                rotateY: rotateYFront,
+                z: 5,
+              }}
+            >
+              <PhoneMockup
+                src="/logo.png" // Usando asset existente
+                alt="Pantalla de la aplicación móvil 1"
+              />
+            </motion.div>
           </div>
         </div>
       </div>
-      <div className="absolute inset-0 z-0 bg-linear-to-br from-primary-dark via-primary-900 to-secondary-900 animate-pulse-bg"></div>
+
+      {/* Fondo degradado sutil */}
+      <div className="absolute inset-0 z-0 opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-dark via-primary to-secondary-dark"></div>
+      </div>
     </section>
   )
 }

@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
         - bg-neutral-darkest: Establece el fondo azul oscuro (#1C2B3A) para toda la página.
         - text-neutral-lightest: Establece el color de texto claro (#F0F4F8) por defecto.
       */}
-      <body className="font-sans bg-neutral-darkest text-neutral-lightest">
+      <body className="font-sans bg-darkest text-neutral-lightest">
         {children}
         <Toaster richColors position="top-right" />
       </body>
