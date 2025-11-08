@@ -1,37 +1,37 @@
 // src/app/layout.js
-import { Montserrat, Open_Sans } from 'next/font/google'
 import './globals.css'
-import { Toaster } from 'sonner'
+import { Inter, Montserrat } from 'next/font/google'
 
-// Configuración de fuentes (Esto ya está correcto)
-const openSans = Open_Sans({
+// Configuración de fuentes (sin cambios)
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-open-sans', // Variable CSS para el cuerpo
+  variable: '--font-inter',
 })
-
 const montserrat = Montserrat({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-montserrat', // Variable CSS para títulos
+  variable: '--font-montserrat',
 })
 
+// --- INICIO DE LA CORRECCIÓN ---
 export const metadata = {
-  title: 'Mi Campaña V2',
-  description: 'Plataforma de gestión de campañas políticas.',
+  // Arreglo 1: Título y descripción reales
+  title: 'Autoridad Política - Plataforma de Gestión de Campañas',
+  description: 'Gestione su estructura, mida su campaña y asegure su victoria.',
+  
+  // Arreglo 2: La línea clave que faltaba
+  viewport: 'width=device-width, initial-scale=1', 
 }
+// --- FIN DE LA CORRECCIÓN ---
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={`${openSans.variable} ${montserrat.variable}`}>
-      {/* AQUÍ APLICAMOS LAS CLASES BASE:
-        - font-sans: Establece Open Sans como fuente por defecto (definido en tailwind.config.mjs).
-        - bg-neutral-darkest: Establece el fondo azul oscuro (#1C2B3A) para toda la página.
-        - text-neutral-lightest: Establece el color de texto claro (#F0F4F8) por defecto.
-      */}
-      <body className="font-sans bg-darkest text-neutral-lightest">
+    <html lang="es">
+      <body
+        className={`${inter.variable} ${montserrat.variable} bg-primary-dark font-sans`}
+      >
         {children}
-        <Toaster richColors position="top-right" />
       </body>
     </html>
   )
